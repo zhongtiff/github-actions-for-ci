@@ -21,7 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version[12.x] }}
+        os: [ubuntu-latest, windows-2016]
+        node-version: [12.x, 14.x]
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version[14.x ] }}
