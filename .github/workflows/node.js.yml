@@ -10,21 +10,58 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
 
+  test:
     runs-on: ubuntu-latest
-
     strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2016]
+        node-version: [12.x, 14.x]
+    steps:
+    - uses: actions/checkout@v2
+      - uses: actions/upload-artifact@master
+        with:
+          name: webpack artifacts
+          path: public/
+      uses: actions/setup-node@v1
+    needs: build
+        node-version: ${{ matrix.node-version }}
+    - name: npm install, and test
+      run: |
+        npm install
+        npm test
+      env:
+        CI: true
+  
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: npm install and build webpack
+    - uses: actions/download-artifact@main
+      with:
+        name: webpack artifacts
+        path: public
+    - name: npm install, and test
+          npm install
+          npm run build
+      - uses: actions/upload-artifact@main
+        with:
+          name: webpack artifacts
+          path: public/
+
+  strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+        os: [ubuntu-latest, windows-2016]
+        node-version: [12.x, 14.x]
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.node-version[14.x ] }}
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
